@@ -1,6 +1,16 @@
-const webpack = require("webpack");
+const webpack = require('webpack');
+const CleanWebPackPlugin = require('clean-webpack-plugin')
+const HtmlWebPackPlugin = require('html-webpack-plugin')
 const process = require('process');
 const path = require('path');
+
+const pathsToClean = ['build']
+const cleanOptions = {
+  root: __dirname,
+  exclude: [],
+  verbose: true,
+  dry: false
+}
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -24,6 +34,10 @@ module.exports = {
         filename: `[name].js`,
         publicPath: PUBLIC_PATH,
     },
+    devServer: {
+      contentBase: './public',
+      hot: true
+    },
     module: {
       rules: [
         { test: /\.jsx?$/, exclude: /node_modules/, use: BABEL_PRESET },
@@ -39,5 +53,14 @@ module.exports = {
         }
       ]
     },
-    plugins: [new ExtractTextPlugin({ filename: "[name].css", allChunks: true })]
+    plugins: [
+      new CleanWebPackPlugin(pathsToClean, cleanOptions),
+      new HtmlWebPackPlugin({
+      filename: "./index.html",
+      template: "./views/home/index.ejs",
+      hash: true,
+      index: true,
+      minify: true
+      }),
+      new ExtractTextPlugin({ filename: '[name].css', allChunks: true })]
 };
