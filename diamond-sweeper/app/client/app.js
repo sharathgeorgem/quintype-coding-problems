@@ -1,11 +1,18 @@
 global.startApp = function (container) {
-  console.log('Inside the function')
-  console.log('Here is the container:', container)
-}
+  let countOfDiamonds = 0
+  let cells = document.getElementsByClassName('cell')
 
-console.log('Outside the f')
-let cells = document.getElementsByTagName('td')
-console.log('The cells are ', cells)
-for (let cell of cells) {
-  cell.className += 'unknown'
+  for (let cell of cells) {
+    cell.addEventListener('click', sayHi)
+    if (!(cell.classList.contains('unknown'))) {
+      cell.classList += ' unknown'
+    }
+    if (cell.classList.contains('diamond')) {
+      ++countOfDiamonds
+    }
+  }
+
+  function sayHi () {
+    console.log(`The number of diamonds are ${countOfDiamonds} `)
+  }
 }
