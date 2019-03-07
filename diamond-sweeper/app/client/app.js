@@ -1,5 +1,6 @@
 global.startApp = function (container) {
   let countOfDiamonds = 0
+  let diamondsUncovered = 0
   let arrayOfDiamonds = []
   let initialScore = 64
   let arrowDirections = {
@@ -13,6 +14,9 @@ global.startApp = function (container) {
     'south-west': 'rotate(135deg)'
   }
   let cells = document.getElementsByClassName('cell')
+  let modal = document.querySelector('.modal')
+  let restartGame = document.querySelector('.restart-game')
+  restartGame.addEventListener('click', initialize)
 
   for (let cell of cells) {
     cell.addEventListener('click', checkForDiamond)
@@ -29,6 +33,13 @@ global.startApp = function (container) {
     }
   }
 
+  let score = document.getElementById('score')
+  score.textContent = 'Score : ' + initialScore
+
+  function initialize () {
+    window.location.reload()
+  }
+
   function checkForDiamond (e) {
     let elementToCheck = e.srcElement
     let elementPosition = elementToCheck.getBoundingClientRect()
@@ -37,9 +48,16 @@ global.startApp = function (container) {
       cellPositionLeft: parseInt(elementPosition.left)
     }
     elementToCheck.classList.remove('unknown')
+    score.textContent = 'Score : ' + (--initialScore)
 
     if (elementToCheck.classList.contains('diamond')) {
       elementToCheck.parentNode.style['background-color'] = '#78e08f'
+      if (diamondsUncovered === 7) {
+        let score = document.getElementById('final-score')
+        score.textContent = 'Your score : ' + initialScore
+        toggleModal()
+      }
+      ++diamondsUncovered
       console.log('You just found a diamond')
       // arrayOfDiamonds.splice(arrayOfDiamonds.indexOf(elementPositionObj), 1)
     } else {
@@ -53,6 +71,10 @@ global.startApp = function (container) {
       elementToCheck.style['transform'] = arrowDirections[typeOfArrow]
       setTimeout(() => elementToCheck.classList.remove('arrow'), 1000)
     }
+  }
+
+  function toggleModal () {
+    modal.classList.toggle('show-modal')
   }
 
   function findTypeOfArrow (originObj, targetObj) {
