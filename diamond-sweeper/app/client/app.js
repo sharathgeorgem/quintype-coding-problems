@@ -1,6 +1,7 @@
 global.startApp = function (container) {
   let countOfDiamonds = 0
   let arrayOfDiamonds = []
+  let initialScore = 64
   let arrowDirections = {
     'north': 'rotate(-90deg)',
     'south': 'rotate(-270deg)',
@@ -28,51 +29,38 @@ global.startApp = function (container) {
     }
   }
 
-  console.log('The array of Diamond position object is ', arrayOfDiamonds)
-
   function checkForDiamond (e) {
     let elementToCheck = e.srcElement
     let elementPosition = elementToCheck.getBoundingClientRect()
     let elementPositionObj = {
-      top: parseInt(elementPosition.top),
-      left: parseInt(elementPosition.left)
+      cellPositionTop: parseInt(elementPosition.top),
+      cellPositionLeft: parseInt(elementPosition.left)
     }
-
     elementToCheck.classList.remove('unknown')
 
     if (elementToCheck.classList.contains('diamond')) {
+      elementToCheck.parentNode.style['background-color'] = '#78e08f'
       console.log('You just found a diamond')
+      // arrayOfDiamonds.splice(arrayOfDiamonds.indexOf(elementPositionObj), 1)
     } else {
+      elementToCheck.parentNode.style['background-color'] = '#2e383a'
       let dynamicDistanceArray = findTheNearestDiamond(elementPositionObj)
       let closestDiamondIndex = dynamicDistanceArray.indexOf(Math.min(...dynamicDistanceArray))
-
       let diamondPosition = arrayOfDiamonds[closestDiamondIndex]
-      console.log('The diamond position to be passed is ', diamondPosition)
-      let typeOfArrow = findTypeOfArrow(elementPosition, diamondPosition)
+      let typeOfArrow = findTypeOfArrow(elementPositionObj, diamondPosition)
 
-      console.log('The type of arrow is ', typeOfArrow)
-      console.log('The diamond position : ', diamondPosition)
-      console.log('The elementClickedOnPosition is ', elementPositionObj)
-
-      console.log('The new array for the type of arrows is given as ', dynamicDistanceArray)
       elementToCheck.classList.add('arrow')
       elementToCheck.style['transform'] = arrowDirections[typeOfArrow]
       setTimeout(() => elementToCheck.classList.remove('arrow'), 1000)
     }
-
-    console.log(` The number of diamonds are ${countOfDiamonds} `)
   }
 
   function findTypeOfArrow (originObj, targetObj) {
-    let x0 = parseInt(originObj.left)
+    let x0 = originObj.cellPositionLeft
     let x1 = targetObj.cellPositionLeft
-
-    let y0 = parseInt(originObj.top)
+    let y0 = originObj.cellPositionTop
     let y1 = targetObj.cellPositionTop
-    console.log(x0, x1, y0, y1)
-    // if (Math.abs(x1 - x0) > Math.abs(y1 - y0)) {
-    // Debug
-    // }
+
     if (x0 === x1) {
       if (y0 > y1) return 'north'
       return 'south'
@@ -89,8 +77,8 @@ global.startApp = function (container) {
 
   function findTheNearestDiamond (diamondPositionObj) {
     let distanceArr = arrayOfDiamonds.map((item, index, arr) => {
-      return parseInt(Math.sqrt(Math.pow((item.cellPositionLeft - diamondPositionObj.left), 2) +
-        Math.pow((item.cellPositionTop - diamondPositionObj.top), 2)))
+      return parseInt(Math.sqrt(Math.pow((item.cellPositionLeft - diamondPositionObj.cellPositionLeft), 2) +
+        Math.pow((item.cellPositionTop - diamondPositionObj.cellPositionTop), 2)))
     })
     return distanceArr
   }

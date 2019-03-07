@@ -1,3 +1,6 @@
+body{
+  background: linear-gradient(to right, #25c481, #25b7c4);
+}
 table {
   display: flex;
   justify-content: center;
@@ -7,6 +10,12 @@ table.diamondsweeper-board {
   td {
     padding: 0;
     border: 1px solid black;
+    box-shadow: 2px 2px #000;
+    background-color: #0B9354;
+  }
+  td:hover {
+    cursor: pointer;
+    background-color: #b8e994;
   }
 }
 
